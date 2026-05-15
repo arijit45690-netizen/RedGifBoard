@@ -42,6 +42,44 @@
 
     </LinearLayout>
 
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="6dp">
+
+            <Button
+                android:id="@+id/tagKiss"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Kiss" />
+
+            <Button
+                android:id="@+id/tagSexy"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Sexy" />
+
+            <Button
+                android:id="@+id/tagAnime"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Anime" />
+
+            <Button
+                android:id="@+id/tagCosplay"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Cosplay" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="24dp"
@@ -55,7 +93,6 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:visibility="gone"
-            android:indeterminateTint="#E94560"
             android:layout_marginEnd="6dp" />
 
         <TextView
@@ -71,9 +108,19 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gifGrid"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="300dp"
         android:clipToPadding="false"
         android:padding="3dp"
         android:overScrollMode="never" />
+
+    <Button
+        android:id="@+id/loadMoreBtn"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="8dp"
+        android:background="#E94560"
+        android:text="Load More"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
 
 </LinearLayout>

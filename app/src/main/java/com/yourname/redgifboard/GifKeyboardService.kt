@@ -4,11 +4,12 @@ import android.content.ClipDescription
 import android.inputmethodservice.InputMethodService
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.FileProvider
-import androidx.core.view.inputmethod.EditorInfoCompat
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,10 +20,14 @@ import java.net.URL
 
 class GifKeyboardService : InputMethodService() {
 
-    private val serviceScope = CoroutineScope(Dispatchers.Main + Job())
+    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private lateinit var gifAdapter: GifAdapter
     private var authToken: String = ""
     private var currentDownloadJob: Job? = null
+
+    private var currentPage = 1
+    private var currentQuery = "trending"
+    private var isLoading = false
 
     override fun onCreateInputView(): View {
         val view = layoutInflater.inflate(R.layout.keyboard_view, null)
@@ -31,73 +36,136 @@ class GifKeyboardService : InputMethodService() {
         val searchBar = view.findViewById<EditText>(R.id.searchBar)
         val loadingBar = view.findViewById<ProgressBar>(R.id.loadingBar)
         val statusText = view.findViewById<TextView>(R.id.statusText)
+        val loadMoreBtn = view.findViewById<Button>(R.id.loadMoreBtn)
 
-        // Set up the GIF grid — 2 columns
+        val tagKiss = view.findViewById<Button>(R.id.tagKiss)
+        val tagSexy = view.findViewById<Button>(R.id.tagSexy)
+        val tagAnime = view.findViewById<Button>(R.id.tagAnime)
+        val tagCosplay = view.findViewById<Button>(R.id.tagCosplay)
+
         gifAdapter = GifAdapter { gif -> sendGif(gif, loadingBar, statusText) }
         recyclerView.layoutManager = GridLayoutManager(this, 2)
         recyclerView.adapter = gifAdapter
 
-        // On open: fetch token, then load trending GIFs
+        searchBar.setOnClickListener {
+            searchBar.requestFocus()
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT)
+        }
+
         serviceScope.launch {
             loadingBar.visibility = View.VISIBLE
             statusText.text = "Loading trending GIFs..."
             fetchToken()
-            loadGifs("trending", loadingBar, statusText)
+            loadGifs(currentQuery, loadingBar, statusText)
         }
 
-        // Search when user taps the search/done button on keyboard
         searchBar.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = searchBar.text.toString().trim()
+
                 if (query.isNotEmpty()) {
+                    currentQuery = query
+                    currentPage = 1
+
                     serviceScope.launch {
-                        loadingBar.visibility = View.VISIBLE
                         statusText.text = "Searching..."
                         loadGifs(query, loadingBar, statusText)
                     }
                 }
                 true
-            } else false
+            } else {
+                false
+            }
         }
+
+        loadMoreBtn.setOnClickListener {
+            if (!isLoading) {
+                currentPage++
+
+                serviceScope.launch {
+                    loadGifs(currentQuery, loadingBar, statusText, true)
+                }
+            }
+        }
+
+        fun quickSearch(tag: String) {
+            searchBar.setText(tag)
+            currentQuery = tag
+            currentPage = 1
+
+            serviceScope.launch {
+                loadGifs(tag, loadingBar, statusText)
+            }
+        }
+
+        tagKiss.setOnClickListener { quickSearch("kiss") }
+        tagSexy.setOnClickListener { quickSearch("sexy") }
+        tagAnime.setOnClickListener { quickSearch("anime") }
+        tagCosplay.setOnClickListener { quickSearch("cosplay") }
 
         return view
     }
 
-    // ── Auth ─────────────────────────────────────────────────────────────────
-
     private suspend fun fetchToken() {
         try {
-            val response = withContext(Dispatchers.IO) { RedGifsClient.api.getToken() }
+            val response = withContext(Dispatchers.IO) {
+                RedGifsClient.api.getToken()
+            }
             authToken = response.token
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    // ── Load GIFs ─────────────────────────────────────────────────────────────
+    private suspend fun loadGifs(
+        query: String,
+        loadingBar: ProgressBar,
+        statusText: TextView,
+        append: Boolean = false
+    ) {
+        if (authToken.isEmpty()) {
+            fetchToken()
+        }
 
-    private suspend fun loadGifs(query: String, loadingBar: ProgressBar, statusText: TextView) {
         try {
+            isLoading = true
+            loadingBar.visibility = View.VISIBLE
+
             val response = withContext(Dispatchers.IO) {
-                RedGifsClient.api.searchGifs("Bearer $authToken", query)
+                RedGifsClient.api.searchGifs(
+                    "Bearer $authToken",
+                    query,
+                    20,
+                    currentPage
+                )
             }
-            gifAdapter.updateGifs(response.gifs)
-            loadingBar.visibility = View.GONE
-            statusText.text = if (response.gifs.isEmpty()) "No results found" else ""
+
+            if (append) {
+                gifAdapter.addGifs(response.gifs)
+            } else {
+                gifAdapter.updateGifs(response.gifs)
+            }
+
+            statusText.text = if (response.gifs.isEmpty()) {
+                "No results found"
+            } else {
+                ""
+            }
+
         } catch (e: Exception) {
-            loadingBar.visibility = View.GONE
-            statusText.text = "Error loading GIFs. Check connection."
+            statusText.text = "Error loading GIFs"
             e.printStackTrace()
+        } finally {
+            loadingBar.visibility = View.GONE
+            isLoading = false
         }
     }
-
-    // ── Send GIF ─────────────────────────────────────────────────────────────
 
     private fun sendGif(gif: GifItem, loadingBar: ProgressBar, statusText: TextView) {
         val ic = currentInputConnection ?: return
         val editorInfo = currentInputEditorInfo ?: return
 
-        // Cancel any previous download
         currentDownloadJob?.cancel()
 
         currentDownloadJob = serviceScope.launch {
@@ -107,11 +175,15 @@ class GifKeyboardService : InputMethodService() {
             try {
                 val cacheFile = withContext(Dispatchers.IO) {
                     val file = File(cacheDir, "${gif.id}.gif")
+
                     if (!file.exists()) {
                         URL(gif.urls.sd).openStream().use { input ->
-                            file.outputStream().use { output -> input.copyTo(output) }
+                            file.outputStream().use { output ->
+                                input.copyTo(output)
+                            }
                         }
                     }
+
                     file
                 }
 
@@ -128,20 +200,22 @@ class GifKeyboardService : InputMethodService() {
                 )
 
                 InputConnectionCompat.commitContent(
-                    ic, editorInfo, inputContentInfo,
+                    ic,
+                    editorInfo,
+                    inputContentInfo,
                     InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION,
                     null
                 )
 
-                loadingBar.visibility = View.GONE
                 statusText.text = "✓ Sent!"
-                delay(1500)
+                delay(1200)
                 statusText.text = ""
 
             } catch (e: Exception) {
-                loadingBar.visibility = View.GONE
-                statusText.text = "Failed to send. Try again."
+                statusText.text = "Failed to send GIF"
                 e.printStackTrace()
+            } finally {
+                loadingBar.visibility = View.GONE
             }
         }
     }

@@ -24,13 +24,17 @@ class GifAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val gif = gifs[position]
+
         Glide.with(holder.imageView.context)
             .asGif()
             .load(gif.urls.sd)
             .placeholder(android.R.color.darker_gray)
             .error(android.R.color.holo_red_dark)
             .into(holder.imageView)
-        holder.imageView.setOnClickListener { onGifClick(gif) }
+
+        holder.imageView.setOnClickListener {
+            onGifClick(gif)
+        }
     }
 
     override fun getItemCount() = gifs.size
@@ -41,8 +45,9 @@ class GifAdapter(
         notifyDataSetChanged()
     }
 
-    fun clearGifs() {
-        gifs.clear()
-        notifyDataSetChanged()
+    fun addGifs(newGifs: List<GifItem>) {
+        val start = gifs.size
+        gifs.addAll(newGifs)
+        notifyItemRangeInserted(start, newGifs.size)
     }
 }

@@ -15,7 +15,8 @@ interface RedGifsApiService {
     suspend fun searchGifs(
         @Header("Authorization") auth: String,
         @Query("search_text") query: String,
-        @Query("count") count: Int = 30,
+        @Query("count") count: Int = 20,
+        @Query("page") page: Int = 1,
         @Query("order") order: String = "trending"
     ): SearchResponse
 }
