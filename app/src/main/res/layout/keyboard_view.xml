@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:background="#0D0D1A">
 
-    <!-- Search bar row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +15,6 @@
         android:paddingBottom="6dp"
         android:gravity="center_vertical">
 
-        <!-- RedGifs label -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,7 +24,6 @@
             android:textStyle="bold"
             android:layout_marginEnd="8dp" />
 
-        <!-- Search input -->
         <EditText
             android:id="@+id/searchBar"
             android:layout_width="0dp"
@@ -34,7 +31,7 @@
             android:layout_weight="1"
             android:background="@drawable/search_bg"
             android:hint="Search GIFs..."
-            android:hintTextColor="#666680"
+            android:textColorHint="#666680"
             android:textColor="#FFFFFF"
             android:textSize="13sp"
             android:paddingStart="14dp"
@@ -45,7 +42,6 @@
 
     </LinearLayout>
 
-    <!-- Status / loading row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="24dp"
@@ -72,7 +68,6 @@
 
     </LinearLayout>
 
-    <!-- GIF grid -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gifGrid"
         android:layout_width="match_parent"
