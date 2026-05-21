@@ -6,14 +6,24 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 class GifAdapter(
     private val gifs: MutableList<GifItem> = mutableListOf(),
     private val onGifClick: (GifItem) -> Unit
 ) : RecyclerView.Adapter<GifAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.gifImageView)
+
+        init {
+            imageView.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onGifClick(gifs[position])
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,13 +38,10 @@ class GifAdapter(
         Glide.with(holder.imageView.context)
             .asGif()
             .load(gif.urls.sd)
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
             .placeholder(android.R.color.darker_gray)
             .error(android.R.color.holo_red_dark)
             .into(holder.imageView)
-
-        holder.imageView.setOnClickListener {
-            onGifClick(gif)
-        }
     }
 
     override fun getItemCount() = gifs.size
