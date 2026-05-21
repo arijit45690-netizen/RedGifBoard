@@ -46,6 +46,7 @@ class GifKeyboardService : InputMethodService() {
         gifAdapter = GifAdapter { gif -> sendGif(gif, loadingBar, statusText) }
         recyclerView.layoutManager = GridLayoutManager(this, 2)
         recyclerView.adapter = gifAdapter
+        recyclerView.setHasFixedSize(true)
 
         searchBar.setOnClickListener {
             searchBar.requestFocus()
