@@ -25,9 +25,11 @@ class GifAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val gif = gifs[position]
 
+        // ⚡ Bolt: Load lightweight thumbnail JPEG (~30KB) instead of decoding full MP4 via .asGif()
+        // This prevents massive bandwidth waste and UI stuttering on the main thread,
+        // and fixes Glide failing to decode remote MP4 files.
         Glide.with(holder.imageView.context)
-            .asGif()
-            .load(gif.urls.sd)
+            .load(gif.urls.thumbnail ?: gif.urls.sd)
             .placeholder(android.R.color.darker_gray)
             .error(android.R.color.holo_red_dark)
             .into(holder.imageView)
