@@ -1,0 +1,3 @@
+## 2024-05-17 - Glide Caching for GIF Downloads
+**Learning:** This Android app downloads GIFs twice: once through Glide for the preview in the `RecyclerView`, and again through `URL.openStream()` when a user selects a GIF to send. Because Glide stores the downloaded files in its own internal cache, standard file operations missed the fact that the file was already on disk.
+**Action:** When a library is used for loading and displaying images/media, use its APIs (e.g., `Glide.with(...).downloadOnly()`) to fetch the underlying file. This inherently reuses the existing cache and avoids unnecessary duplicate network requests, significantly improving performance.
