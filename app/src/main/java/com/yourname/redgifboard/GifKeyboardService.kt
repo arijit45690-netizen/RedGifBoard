@@ -177,11 +177,16 @@ class GifKeyboardService : InputMethodService() {
                     val file = File(cacheDir, "${gif.id}.gif")
 
                     if (!file.exists()) {
-                        URL(gif.urls.sd).openStream().use { input ->
-                            file.outputStream().use { output ->
-                                input.copyTo(output)
-                            }
-                        }
+                        // ⚡ Bolt Optimization: Use Glide's disk cache instead of redownloading
+                        // Since the GIF was already loaded in the grid, it's in the cache.
+                        // This prevents an unnecessary network request and makes sharing instant.
+                        val cachedFile = com.bumptech.glide.Glide.with(this@GifKeyboardService)
+                            .downloadOnly()
+                            .load(gif.urls.sd)
+                            .submit()
+                            .get()
+
+                        cachedFile.copyTo(file, overwrite = true)
                     }
 
                     file
