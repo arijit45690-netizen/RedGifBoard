@@ -1,0 +1,4 @@
+## 2024-05-31 - Redundant Network Requests from Android Adapters
+
+**Learning:** When displaying images (like GIFs) in a RecyclerView (e.g., using Glide) and later needing the raw file for sharing/sending (via `InputContentInfoCompat`), it is an anti-pattern to redownload the URL using `URL.openStream()`. The image loader library has already fetched and cached the image file locally. Calling `URL.openStream()` bypasses this cache and triggers a redundant network request, causing a severe performance bottleneck (1-2s delay).
+**Action:** Always check if the image loader library (like Glide or Picasso) provides a way to access its local cache synchronously (e.g., `Glide.with(context).downloadOnly().load(url).submit().get()`). Reusing the locally cached file removes the redundant network request and speeds up the sharing/sending functionality dramatically.
