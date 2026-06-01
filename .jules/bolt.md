@@ -1,0 +1,3 @@
+## 2024-06-01 - Avoid Redundant Downloads
+**Learning:** In Android apps using Glide, Glide handles downloading and caching images automatically. When trying to use an image that has already been loaded by Glide (e.g. from a RecyclerView into another part of the app like sharing or downloading), bypassing Glide and downloading the file directly via `URL.openStream()` forces a redundant network request.
+**Action:** Use `Glide.with(context).downloadOnly().load(url).submit().get()` to fetch the image file. Glide will immediately return the cached file if it exists, saving network bandwidth and time. Ensure this is run on a background thread as `.get()` is blocking.
