@@ -1,0 +1,3 @@
+## 2024-05-18 - Glide Cache for Network Reduction
+**Learning:** In Android apps that use Glide to display images in a grid (like `RecyclerView`), those images are already cached locally. When the user taps an image to share it, instead of initiating a new duplicate network request to download the image file, you can use `Glide.with(context).downloadOnly().load(url).submit().get()` to instantly retrieve the file from Glide's cache.
+**Action:** Always check if an image resource has already been loaded by Glide or another image loading library before issuing a manual network request for the same URL.
