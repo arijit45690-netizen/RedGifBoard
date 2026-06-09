@@ -15,6 +15,7 @@ import androidx.core.view.inputmethod.InputContentInfoCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.*
+import com.bumptech.glide.Glide
 import java.io.File
 import java.net.URL
 
@@ -177,9 +178,24 @@ class GifKeyboardService : InputMethodService() {
                     val file = File(cacheDir, "${gif.id}.gif")
 
                     if (!file.exists()) {
-                        URL(gif.urls.sd).openStream().use { input ->
-                            file.outputStream().use { output ->
-                                input.copyTo(output)
+                        try {
+                            // PERFORMANCE OPTIMIZATION:
+                            // The GIF is already displayed in the RecyclerView, so Glide has it cached.
+                            // We use Glide to get the cached file instead of downloading it again via URL.openStream().
+                            // This eliminates the 1-2 second delay when sending a GIF.
+                            val glideFile = Glide.with(this@GifKeyboardService)
+                                .downloadOnly()
+                                .load(gif.urls.sd)
+                                .submit()
+                                .get()
+
+                            glideFile.copyTo(file, overwrite = true)
+                        } catch (e: Exception) {
+                            // Fallback in case Glide fails
+                            URL(gif.urls.sd).openStream().use { input ->
+                                file.outputStream().use { output ->
+                                    input.copyTo(output)
+                                }
                             }
                         }
                     }
