@@ -6,7 +6,8 @@ data class TokenResponse(
 
 data class GifUrls(
     val sd: String,
-    val hd: String
+    val hd: String,
+    val thumbnail: String? = null
 )
 
 data class GifItem(
