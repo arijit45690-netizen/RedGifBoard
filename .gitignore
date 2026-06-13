@@ -1,0 +1,9 @@
+*.bin
+*.json
+*.flat
+*.xml
+*.class
+*.txt
+app/build/
+.gradle/
+build/

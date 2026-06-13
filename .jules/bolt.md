@@ -1,0 +1,3 @@
+## 2024-06-25 - Avoid redundant network requests by using Glide Cache
+**Learning:** In Android apps that display images/GIFs in a RecyclerView using an image loader like Glide, the files are cached locally. When we need to share or send these files to other apps (via `FileProvider` or `InputContentInfoCompat`), we shouldn't redownload them using `URL.openStream()`. This causes a noticeable delay (1-2 seconds in this app) and wastes bandwidth.
+**Action:** Instead of redownloading, use Glide's `downloadOnly()` API (`Glide.with(context).downloadOnly().load(url).submit().get()`) inside a coroutine to retrieve the already cached `File`. This makes the action near-instantaneous for files that are already visible on screen.
