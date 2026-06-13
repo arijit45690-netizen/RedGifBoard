@@ -14,6 +14,7 @@ import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 import java.io.File
 import java.net.URL
@@ -173,15 +174,21 @@ class GifKeyboardService : InputMethodService() {
             loadingBar.visibility = View.VISIBLE
 
             try {
+                // ⚡ Bolt Optimization: Use Glide's cached file instead of redownloading.
+                // Since the GIF is already visible in the keyboard grid, Glide has it cached.
+                // This eliminates the 1-2 second download delay before sending.
+                // We copy the Glide cache file to a file with a .gif extension so FileProvider
+                // returns the correct MIME type (image/gif).
                 val cacheFile = withContext(Dispatchers.IO) {
                     val file = File(cacheDir, "${gif.id}.gif")
 
                     if (!file.exists()) {
-                        URL(gif.urls.sd).openStream().use { input ->
-                            file.outputStream().use { output ->
-                                input.copyTo(output)
-                            }
-                        }
+                        val glideCachedFile = Glide.with(this@GifKeyboardService)
+                            .downloadOnly()
+                            .load(gif.urls.sd)
+                            .submit()
+                            .get()
+                        glideCachedFile.copyTo(file)
                     }
 
                     file
