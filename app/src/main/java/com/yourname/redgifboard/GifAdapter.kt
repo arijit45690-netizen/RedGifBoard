@@ -25,9 +25,9 @@ class GifAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val gif = gifs[position]
 
+        // Use static thumbnail instead of video to significantly reduce bandwidth and memory usage
         Glide.with(holder.imageView.context)
-            .asGif()
-            .load(gif.urls.sd)
+            .load(gif.urls.thumbnail)
             .placeholder(android.R.color.darker_gray)
             .error(android.R.color.holo_red_dark)
             .into(holder.imageView)
