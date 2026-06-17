@@ -45,6 +45,8 @@ class GifKeyboardService : InputMethodService() {
 
         gifAdapter = GifAdapter { gif -> sendGif(gif, loadingBar, statusText) }
         recyclerView.layoutManager = GridLayoutManager(this, 2)
+        // ⚡ Bolt: Prevent unnecessary layout remeasurements for better scrolling performance
+        recyclerView.setHasFixedSize(true)
         recyclerView.adapter = gifAdapter
 
         searchBar.setOnClickListener {
@@ -177,11 +179,13 @@ class GifKeyboardService : InputMethodService() {
                     val file = File(cacheDir, "${gif.id}.gif")
 
                     if (!file.exists()) {
-                        URL(gif.urls.sd).openStream().use { input ->
-                            file.outputStream().use { output ->
-                                input.copyTo(output)
-                            }
-                        }
+                        // ⚡ Bolt: Use Glide to get the cached file instead of re-downloading
+                        val glideFile = com.bumptech.glide.Glide.with(applicationContext)
+                            .asFile()
+                            .load(gif.urls.sd)
+                            .submit()
+                            .get()
+                        glideFile.copyTo(file, overwrite = true)
                     }
 
                     file
