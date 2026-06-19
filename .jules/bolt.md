@@ -1,0 +1,3 @@
+## 2024-06-19 - Network vs Cache fetching in Android RecyclerView+Glide setups
+**Learning:** If an application uses Glide to display images/GIFs in a RecyclerView, the raw files are typically already cached on disk. Downloading them again via `URL.openStream()` when a user interacts with the image is redundant and slow.
+**Action:** Always check if a media file being downloaded for sharing or local processing has already been loaded by an image loading library (like Glide or Picasso). Use the library's caching mechanism (e.g. `Glide.with(context).asFile().load(url).submit().get()`) to fetch the local cached file directly, eliminating network delay.
