@@ -25,9 +25,12 @@ class GifAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val gif = gifs[position]
 
+        // ⚡ Bolt Optimization: Ensure we cache the original source data
+        // This guarantees that when the user taps to send, the file is ready in cache
         Glide.with(holder.imageView.context)
             .asGif()
             .load(gif.urls.sd)
+            .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.DATA)
             .placeholder(android.R.color.darker_gray)
             .error(android.R.color.holo_red_dark)
             .into(holder.imageView)
