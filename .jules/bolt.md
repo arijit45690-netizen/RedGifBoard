@@ -1,0 +1,3 @@
+## 2024-06-22 - Network Redownload Avoidance
+**Learning:** In Android apps using image loading libraries like Glide to display lists of items, those same items often need to be shared or sent elsewhere. If a separate download logic is used for the sharing action (e.g. `URL.openStream()`), it completely ignores the fact that the image library just cached that exact same file on disk to display it.
+**Action:** When implementing share/send features for media that is already displayed on screen, always check the image loading library's cache first before initiating a network request. This can turn a multi-second network delay into a near-instant disk read.
