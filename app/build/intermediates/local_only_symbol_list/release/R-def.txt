@@ -1,0 +1,21 @@
+R_DEF: Internal format may change without notice
+local
+drawable search_bg
+id btnEnable
+id btnSelect
+id gifGrid
+id gifImageView
+id loadMoreBtn
+id loadingBar
+id searchBar
+id statusText
+id step2Hint
+id tagAnime
+id tagCosplay
+id tagKiss
+id tagSexy
+layout activity_main
+layout gif_item
+layout keyboard_view
+xml file_provider_paths
+xml method

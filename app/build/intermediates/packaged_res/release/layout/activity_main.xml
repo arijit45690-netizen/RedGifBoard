@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="28dp"
+    android:background="#0D0D1A">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RedGif Board"
+        android:textSize="32sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_marginBottom="6dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GIF Keyboard · Powered by RedGifs"
+        android:textSize="13sp"
+        android:textColor="#E94560"
+        android:layout_marginBottom="48dp" />
+
+    <!-- Step 1 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="STEP 1"
+        android:textSize="11sp"
+        android:textColor="#666680"
+        android:letterSpacing="0.1"
+        android:layout_marginBottom="6dp" />
+
+    <Button
+        android:id="@+id/btnEnable"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Enable Keyboard in Settings"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#E94560"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/step2Hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tap Step 1 first to enable the keyboard in settings."
+        android:textSize="12sp"
+        android:textColor="#888888"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Step 2 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="STEP 2"
+        android:textSize="11sp"
+        android:textColor="#666680"
+        android:letterSpacing="0.1"
+        android:layout_marginBottom="6dp" />
+
+    <Button
+        android:id="@+id/btnSelect"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Switch to RedGif Board"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#16213E" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Open any chat app → tap a text field → switch keyboard to RedGif Board."
+        android:textSize="12sp"
+        android:textColor="#555570"
+        android:layout_marginTop="8dp"
+        android:gravity="center" />
+
+</LinearLayout>

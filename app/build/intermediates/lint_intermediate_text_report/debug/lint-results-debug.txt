@@ -1,0 +1,251 @@
+/app/app/build.gradle:13: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
+        targetSdk 34
+        ~~~~~~~~~~~~
+
+   Explanation for issues of type "OldTargetApi":
+   When your application runs on a version of Android that is more recent than
+   your targetSdkVersion specifies that it has been tested with, various
+   compatibility modes kick in. This ensures that your application continues
+   to work, but it may look out of place. For example, if the targetSdkVersion
+   is less than 14, your app may get an option button in the UI.
+
+   To fix this issue, set the targetSdkVersion to the highest available value.
+   Then test your app to make sure everything works correctly. You may want to
+   consult the compatibility notes to see what changes apply to each version
+   you are adding support for:
+   https://developer.android.com/reference/android/os/Build.VERSION_CODES.html
+   as well as follow this guide:
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.
+   html
+
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.html
+
+/app/app/src/main/java/com/yourname/redgifboard/GifKeyboardService.kt:34: Warning: Avoid passing null as the view root (needed to resolve layout parameters on the inflated layout's root element) [InflateParams]
+        val view = layoutInflater.inflate(R.layout.keyboard_view, null)
+                                                                  ~~~~
+
+   Explanation for issues of type "InflateParams":
+   When inflating a layout, avoid passing in null as the parent view, since
+   otherwise any layout parameters on the root of the inflated layout will be
+   ignored.
+
+   https://www.bignerdranch.com/blog/understanding-androids-layoutinflater-inflate/
+
+/app/app/build.gradle:37: Warning: A newer version of androidx.core:core-ktx than 1.12.0 is available: 1.19.0 [GradleDependency]
+    implementation 'androidx.core:core-ktx:1.12.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/build.gradle:38: Warning: A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.7.1 [GradleDependency]
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/build.gradle:39: Warning: A newer version of com.google.android.material:material than 1.11.0 is available: 1.14.0 [GradleDependency]
+    implementation 'com.google.android.material:material:1.11.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/build.gradle:40: Warning: A newer version of androidx.recyclerview:recyclerview than 1.3.2 is available: 1.4.0 [GradleDependency]
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+/app/app/src/main/java/com/yourname/redgifboard/GifAdapter.kt:45: Warning: It will always be more efficient to use more specific change events if you can. Rely on notifyDataSetChanged as a last resort. [NotifyDataSetChanged]
+        notifyDataSetChanged()
+        ~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "NotifyDataSetChanged":
+   The RecyclerView adapter's onNotifyDataSetChanged method does not specify
+   what about the data set has changed, forcing any observers to assume that
+   all existing items and structure may no longer be valid. `LayoutManager`s
+   will be forced to fully rebind and relayout all visible views.
+
+/app/app/src/main/res/layout/activity_main.xml:8: Warning: Possible overdraw: Root element paints background #0D0D1A with a theme that also paints a background (inferred theme is @style/Theme.AppCompat.DayNight.NoActionBar) [Overdraw]
+    android:background="#0D0D1A">
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:6: Warning: Possible overdraw: Root element paints background #0D0D1A with a theme that also paints a background (inferred theme is @style/Theme.AppCompat.DayNight.NoActionBar) [Overdraw]
+    android:background="#0D0D1A">
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "Overdraw":
+   If you set a background drawable on a root view, then you should use a
+   custom theme where the theme background is null. Otherwise, the theme
+   background will be painted first, only to have your custom background
+   completely cover it; this is called "overdraw".
+
+   NOTE: This detector relies on figuring out which layouts are associated
+   with which activities based on scanning the Java code, and it's currently
+   doing that using an inexact pattern matching algorithm. Therefore, it can
+   incorrectly conclude which activity the layout is associated with and then
+   wrongly complain that a background-theme is hidden.
+
+   If you want your custom background on multiple pages, then you should
+   consider making a custom theme with your custom background and just using
+   that theme instead of a root element background.
+
+   Of course it's possible that your custom drawable is translucent and you
+   want it to be mixed with the background. However, you will get better
+   performance if you pre-mix the background with your drawable and use that
+   resulting image or color as a custom theme background instead.
+
+/app/app/src/main/res/layout/keyboard_view.xml:56: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+            <Button
+             ~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:62: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+            <Button
+             ~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:68: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+            <Button
+             ~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:74: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+            <Button
+             ~~~~~~
+
+   Explanation for issues of type "ButtonStyle":
+   Button bars typically use a borderless style for the buttons. Set the
+   style="?android:attr/buttonBarButtonStyle" attribute on each of the
+   buttons, and set style="?android:attr/buttonBarStyle" on the parent layout
+
+   https://d.android.com/r/studio-ui/designer/material/dialogs
+
+/app/app/src/main/res/layout/keyboard_view.xml:27: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+
+   Explanation for issues of type "Autofill":
+   Specify an autofillHints attribute when targeting SDK version 26 or higher
+   or explicitly specify that the view is not important for autofill. Your app
+   can help an autofill service classify the data correctly by providing the
+   meaning of each view that could be autofillable, such as views representing
+   usernames, passwords, credit card fields, email addresses, etc.
+
+   The hints can have any value, but it is recommended to use predefined
+   values like 'username' for a username or 'creditCardNumber' for a credit
+   card number. For a list of all predefined autofill hint constants, see the
+   AUTOFILL_HINT_ constants in the View reference at
+   https://developer.android.com/reference/android/view/View.html.
+
+   You can mark a view unimportant for autofill by specifying an
+   importantForAutofill attribute on that view or a parent view. See
+   https://developer.android.com/reference/android/view/View.html#setImportant
+   ForAutofill(int).
+
+   https://developer.android.com/guide/topics/text/autofill.html
+
+/app/app/src/main/res/layout/gif_item.xml:7: Warning: Missing contentDescription attribute on image [ContentDescription]
+    <ImageView
+     ~~~~~~~~~
+
+   Explanation for issues of type "ContentDescription":
+   Non-textual widgets like ImageViews and ImageButtons should use the
+   contentDescription attribute to specify a textual description of the widget
+   such that screen readers and other accessibility tools can adequately
+   describe the user interface.
+
+   Note that elements in application screens that are purely decorative and do
+   not provide any content or enable a user action should not have
+   accessibility content descriptions. In this case, set their descriptions to
+   @null. If your app's minSdkVersion is 16 or higher, you can instead set
+   these graphical elements' android:importantForAccessibility attributes to
+   no.
+
+   Note that for text fields, you should not set both the hint and the
+   contentDescription attributes since the hint will never be shown. Just set
+   the hint.
+
+   https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases
+
+/app/app/src/main/java/com/yourname/redgifboard/GifKeyboardService.kt:59: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            statusText.text = "Loading trending GIFs..."
+                               ~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/java/com/yourname/redgifboard/GifKeyboardService.kt:73: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                        statusText.text = "Searching..."
+                                           ~~~~~~~~~~~~
+/app/app/src/main/java/com/yourname/redgifboard/GifKeyboardService.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            statusText.text = "Error loading GIFs"
+                               ~~~~~~~~~~~~~~~~~~
+/app/app/src/main/java/com/yourname/redgifboard/GifKeyboardService.kt:173: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            statusText.text = "Sending GIF..."
+                               ~~~~~~~~~~~~~~
+/app/app/src/main/java/com/yourname/redgifboard/GifKeyboardService.kt:216: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                statusText.text = "✓ Sent!"
+                                   ~~~~~~~
+/app/app/src/main/java/com/yourname/redgifboard/GifKeyboardService.kt:221: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                statusText.text = "Failed to send GIF"
+                                   ~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "SetTextI18n":
+   When calling TextView#setText
+   * Never call Number#toString() to format numbers; it will not handle
+   fraction separators and locale-specific digits properly. Consider using
+   String#format with proper format specifications (%d or %f) instead.
+   * Do not pass a string literal (e.g. "Hello") to display text. Hardcoded
+   text can not be properly translated to other languages. Consider using
+   Android resource strings instead.
+   * Do not build messages by concatenating text chunks. Such messages can not
+   be properly translated.
+
+   https://developer.android.com/guide/topics/resources/localization.html
+
+/app/app/src/main/res/layout/activity_main.xml:13: Warning: Hardcoded string "RedGif Board", should use @string resource [HardcodedText]
+        android:text="RedGif Board"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/activity_main.xml:22: Warning: Hardcoded string "GIF Keyboard · Powered by RedGifs", should use @string resource [HardcodedText]
+        android:text="GIF Keyboard · Powered by RedGifs"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/activity_main.xml:31: Warning: Hardcoded string "STEP 1", should use @string resource [HardcodedText]
+        android:text="STEP 1"
+        ~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/activity_main.xml:41: Warning: Hardcoded string "Enable Keyboard in Settings", should use @string resource [HardcodedText]
+        android:text="Enable Keyboard in Settings"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/activity_main.xml:50: Warning: Hardcoded string "Tap Step 1 first to enable the keyboard in settings.", should use @string resource [HardcodedText]
+        android:text="Tap Step 1 first to enable the keyboard in settings."
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/activity_main.xml:59: Warning: Hardcoded string "STEP 2", should use @string resource [HardcodedText]
+        android:text="STEP 2"
+        ~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/activity_main.xml:69: Warning: Hardcoded string "Switch to RedGif Board", should use @string resource [HardcodedText]
+        android:text="Switch to RedGif Board"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/activity_main.xml:76: Warning: Hardcoded string "Open any chat app → tap a text field → switch keyboard to RedGif Board.", should use @string resource [HardcodedText]
+        android:text="Open any chat app → tap a text field → switch keyboard to RedGif Board."
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:21: Warning: Hardcoded string "RedGif", should use @string resource [HardcodedText]
+            android:text="RedGif"
+            ~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:33: Warning: Hardcoded string "Search GIFs...", should use @string resource [HardcodedText]
+            android:hint="Search GIFs..."
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:60: Warning: Hardcoded string "Kiss", should use @string resource [HardcodedText]
+                android:text="Kiss" />
+                ~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:66: Warning: Hardcoded string "Sexy", should use @string resource [HardcodedText]
+                android:text="Sexy" />
+                ~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:72: Warning: Hardcoded string "Anime", should use @string resource [HardcodedText]
+                android:text="Anime" />
+                ~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:78: Warning: Hardcoded string "Cosplay", should use @string resource [HardcodedText]
+                android:text="Cosplay" />
+                ~~~~~~~~~~~~~~~~~~~~~~
+/app/app/src/main/res/layout/keyboard_view.xml:122: Warning: Hardcoded string "Load More", should use @string resource [HardcodedText]
+        android:text="Load More"
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "HardcodedText":
+   Hardcoding text attributes directly in layout files is bad for several
+   reasons:
+
+   * When creating configuration variations (for example for landscape or
+   portrait) you have to repeat the actual text (and keep it up to date when
+   making changes)
+
+   * The application cannot be translated to other languages by just adding
+   new translations for existing string resources.
+
+   There are quickfixes to automatically extract this hardcoded string into a
+   resource lookup.
+
+0 errors, 36 warnings
