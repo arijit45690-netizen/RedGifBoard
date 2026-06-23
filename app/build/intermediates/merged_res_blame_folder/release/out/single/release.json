@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.yourname.redgifboard.app-merged_res-4:/layout_activity_main.xml.flat",
+        "source": "com.yourname.redgifboard.app-main-5:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.yourname.redgifboard.app-merged_res-4:/xml_method.xml.flat",
+        "source": "com.yourname.redgifboard.app-main-5:/xml/method.xml"
+    },
+    {
+        "merged": "com.yourname.redgifboard.app-merged_res-4:/drawable_search_bg.xml.flat",
+        "source": "com.yourname.redgifboard.app-main-5:/drawable/search_bg.xml"
+    },
+    {
+        "merged": "com.yourname.redgifboard.app-merged_res-4:/layout_keyboard_view.xml.flat",
+        "source": "com.yourname.redgifboard.app-main-5:/layout/keyboard_view.xml"
+    },
+    {
+        "merged": "com.yourname.redgifboard.app-merged_res-4:/xml_file_provider_paths.xml.flat",
+        "source": "com.yourname.redgifboard.app-main-5:/xml/file_provider_paths.xml"
+    },
+    {
+        "merged": "com.yourname.redgifboard.app-merged_res-4:/layout_gif_item.xml.flat",
+        "source": "com.yourname.redgifboard.app-main-5:/layout/gif_item.xml"
+    }
+]
