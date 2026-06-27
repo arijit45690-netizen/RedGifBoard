@@ -1,0 +1,3 @@
+## 2024-06-27 - Reuse Glide Cache for GIF Keyboard Delivery
+**Learning:** In Android GIF Keyboards, users see a grid of GIFs before sending one. The adapter already downloads these via Glide. The existing keyboard implementation was fetching the selected GIF a second time over the network via `URL.openStream()` to save it for `commitContent()`.
+**Action:** Always reuse the image loading library's (Glide/Coil) disk cache when an image has already been displayed and needs to be downloaded/shared. Use `Glide.with().downloadOnly().load(url).submit().get()` or `Glide.with().asFile().load(url).submit().get()` to fetch the cached file directly and instantly without another network call.
