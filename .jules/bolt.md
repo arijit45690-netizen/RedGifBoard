@@ -1,0 +1,3 @@
+## 2024-05-24 - Glide Cache Reuse for Image Sending
+**Learning:** In Android, when an image loading library like Glide displays an image, it usually caches it on disk. If the application later needs to perform operations on the actual file (e.g. sharing the image file to another app via an `InputMethodService` keyboard), re-downloading the image using a standard HTTP request like `URL().openStream()` is highly inefficient, wasting data and causing unnecessary delay.
+**Action:** Instead of re-downloading, always use the image loading library's cache retrieval mechanism (like Glide's `downloadOnly().load(url).submit().get()`) to fetch the already-cached `File`.
