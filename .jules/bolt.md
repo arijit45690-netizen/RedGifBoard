@@ -1,0 +1,3 @@
+## 2024-07-01 - Redundant Network Requests for Cached Images
+**Learning:** In Android apps using Glide, displaying an image from a URL inherently caches it. If the app later needs the actual file for that same URL (e.g., to share via `FileProvider`), it should query the image loader's cache instead of doing a raw `URL.openStream()` download.
+**Action:** When implementing share/send functionality for images already visible on screen, always check if the image loading library can provide the cached `File` using `.asFile().load(url).submit().get()` to eliminate redundant multi-megabyte network requests.
