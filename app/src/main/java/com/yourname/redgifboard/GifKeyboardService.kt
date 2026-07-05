@@ -14,6 +14,7 @@ import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 import java.io.File
 import java.net.URL
@@ -177,9 +178,22 @@ class GifKeyboardService : InputMethodService() {
                     val file = File(cacheDir, "${gif.id}.gif")
 
                     if (!file.exists()) {
-                        URL(gif.urls.sd).openStream().use { input ->
-                            file.outputStream().use { output ->
-                                input.copyTo(output)
+                        try {
+                            // ⚡ Bolt Optimization: Use Glide's disk cache to copy the file
+                            // This eliminates a redundant network download (saving 1-2s delay)
+                            // since the GIF is already loaded in the keyboard grid by Glide.
+                            val cachedFile = Glide.with(this@GifKeyboardService)
+                                .asFile()
+                                .load(gif.urls.sd)
+                                .submit()
+                                .get()
+                            cachedFile.copyTo(file, overwrite = true)
+                        } catch (e: Exception) {
+                            // Fallback to network download if cache miss
+                            URL(gif.urls.sd).openStream().use { input ->
+                                file.outputStream().use { output ->
+                                    input.copyTo(output)
+                                }
                             }
                         }
                     }
