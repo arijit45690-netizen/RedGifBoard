@@ -24,6 +24,9 @@ class GifKeyboardService : InputMethodService() {
     private lateinit var gifAdapter: GifAdapter
     private var authToken: String = ""
     private var currentDownloadJob: Job? = null
+    // ⚡ Bolt Optimization: Keep track of search jobs to cancel them when a new one starts
+    // This prevents race conditions and saves bandwidth when the user types quickly
+    private var currentSearchJob: Job? = null
 
     private var currentPage = 1
     private var currentQuery = "trending"
@@ -45,6 +48,8 @@ class GifKeyboardService : InputMethodService() {
 
         gifAdapter = GifAdapter { gif -> sendGif(gif, loadingBar, statusText) }
         recyclerView.layoutManager = GridLayoutManager(this, 2)
+        // ⚡ Bolt Optimization: Skip expensive layout recalculations as GIF items have fixed height
+        recyclerView.setHasFixedSize(true)
         recyclerView.adapter = gifAdapter
 
         searchBar.setOnClickListener {
@@ -68,7 +73,8 @@ class GifKeyboardService : InputMethodService() {
                     currentQuery = query
                     currentPage = 1
 
-                    serviceScope.launch {
+                    currentSearchJob?.cancel()
+                    currentSearchJob = serviceScope.launch {
                         statusText.text = "Searching..."
                         loadGifs(query, loadingBar, statusText)
                     }
@@ -94,7 +100,8 @@ class GifKeyboardService : InputMethodService() {
             currentQuery = tag
             currentPage = 1
 
-            serviceScope.launch {
+            currentSearchJob?.cancel()
+            currentSearchJob = serviceScope.launch {
                 loadGifs(tag, loadingBar, statusText)
             }
         }
