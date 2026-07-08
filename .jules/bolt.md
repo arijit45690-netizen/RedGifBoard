@@ -1,0 +1,3 @@
+## 2024-05-24 - Glide downloadOnly vs URL.openStream
+**Learning:** Using an image loading library like Glide (via `downloadOnly()`) to handle file downloads that are simply copied to another destination can cause a performance degradation. It results in double disk writes and duplicated storage because Glide caches the file first, and then the file is copied to the final destination.
+**Action:** Avoid replacing raw stream downloads with image loader library caches when the goal is just to save a file to a specific location on disk, unless the image loader specifically supports saving to a destination without caching.
